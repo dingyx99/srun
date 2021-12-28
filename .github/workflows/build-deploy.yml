@@ -18,9 +18,14 @@ jobs:
           stable: 'true'
           go-version: '1.15' # The Go version to download (if necessary) and use.
       - run: go version
-      - run: CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o bin/srun-mac ./cmd/srun
+      - run: CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o bin/srun-mac-amd64 ./cmd/srun
+      - run: CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/srun-mac-arm64 ./cmd/srun
       - run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/srun-linux ./cmd/srun
       - run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/srun.exe ./cmd/srun
+      - run: CGO_ENABLED=0 GOOS=linux GOARCH=mips go build -o bin/srun-router-mips ./cmd/srun
+      - run: CGO_ENABLED=0 GOOS=linux GOARCH=mipsle go build -o bin/srun-router-mipsle ./cmd/srun
+      - run: CGO_ENABLED=0 GOOS=linux GOARCH=mips64 go build -o bin/srun-router-mips64 ./cmd/srun
+      - run: CGO_ENABLED=0 GOOS=linux GOARCH=mips64le go build -o bin/srun-router-mips64le ./cmd/srun
 
       - name: Create Release
         id: create_release
@@ -33,15 +38,26 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Release mac
-        id: upload-release-mac
+      - name: Upload Release mac-amd64
+        id: upload-release-mac-amd64
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./bin/srun-mac
-          asset_name: srun-mac
+          asset_path: ./bin/srun-mac-amd64
+          asset_name: srun-mac-amd64
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release mac-arm64
+        id: upload-release-mac-arm64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./bin/srun-mac-arm64
+          asset_name: srun-mac-arm64
           asset_content_type: application/octet-stream
 
       - name: Upload Release Linux
@@ -64,4 +80,48 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: ./bin/srun.exe
           asset_name: srun.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Router-mips
+        id: upload-release-router-mips
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./bin/srun-router-mips
+          asset_name: srun-router-mips
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Router-mipsle
+        id: upload-release-router-mipsle
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./bin/srun-router-mipsle
+          asset_name: srun-router-mipsle
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Router-mips64
+        id: upload-release-router-mips64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./bin/srun-router-mips64
+          asset_name: srun-router-mips64
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Router-mips64le
+        id: upload-release-router-mips64le
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./bin/srun-router-mips64le
+          asset_name: srun-router-mips64le
           asset_content_type: application/octet-stream
